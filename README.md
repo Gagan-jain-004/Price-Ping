@@ -8,7 +8,7 @@ Track product prices across e-commerce sites and get alerts on price drops. Buil
 - 📊 **Price History Charts** - Interactive graphs showing price trends over time
 - 🔐 **Google Authentication** - Secure sign-in with Google OAuth
 - 🔄 **Automated Daily Checks** - Scheduled cron jobs check prices automatically
-- 📧 **Email Alerts** - Get notified when prices drop via Resend
+- 📧 **Email Alerts** - Get notified when prices drop via Node Mailer
 
 ## 🛠️ Tech Stack
 
@@ -23,7 +23,7 @@ Track product prices across e-commerce sites and get alerts on price drops. Buil
   - Google Authentication
   - Row Level Security (RLS)
   - pg_cron for scheduled jobs
-- **Resend** - Transactional emails
+- **NodeMailer** - Transactional emails
 - **shadcn/ui** - UI component library
 - **Recharts** - Interactive charts
 - **Tailwind CSS** - Styling
@@ -35,7 +35,7 @@ Before you begin, ensure you have:
 - Node.js 18+ installed
 - A [Supabase](https://supabase.com) account
 - A [Firecrawl](https://firecrawl.dev) account
-- A [Resend](https://resend.com) account
+
 - Google OAuth credentials from [Google Cloud Console](https://console.cloud.google.com/)
 
 ## 🚀 Setup Instructions
@@ -186,11 +186,27 @@ SELECT cron.schedule(
 1. Sign up at [firecrawl.dev](https://firecrawl.dev)
 2. Go to dashboard and get your API key
 
-### 4. Resend Setup
+### 4. SMTP Email Setup (Gmail)
 
-1. Sign up at [resend.com](https://resend.com)
-2. Get your API key from the dashboard
-3. (Optional) Add and verify your domain for custom email addresses
+1. **Enable 2-Factor Authentication on your Google Account**
+   - Go to [Google Account Security](https://myaccount.google.com/security)
+   - Enable 2-Step Verification
+
+2. **Generate App Password**
+   - Visit [Google App Passwords](https://myaccount.google.com/apppasswords)
+   - Select "Mail" and your device
+   - Copy the generated 16-character password
+
+3. **Add to your `.env` file**
+```env
+   EMAIL_USER=your-email@gmail.com
+   EMAIL_PASS=your-16-char-app-password
+```
+
+4. **Install Nodemailer**
+```bash
+   npm install nodemailer
+```
 
 ### 5. Environment Variables
 
@@ -205,9 +221,9 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 # Firecrawl
 FIRECRAWL_API_KEY=your_firecrawl_api_key
 
-# Resend
-RESEND_API_KEY=your_resend_api_key
-RESEND_FROM_EMAIL=onboarding@resend.dev
+#SMTP
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-16-char-app-password
 
 # Cron Job Security (generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
 CRON_SECRET=your_generated_cron_secret
@@ -256,8 +272,8 @@ Open [http://localhost:3000](http://localhost:3000)
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY` ⚠️
    - `FIRECRAWL_API_KEY`
-   - `RESEND_API_KEY`
-   - `RESEND_FROM_EMAIL`
+   - `SMTPMail`
+   - `SMTPPASS`
    - `CRON_SECRET`
    - `NEXT_PUBLIC_APP_URL` (set to your Vercel URL)
 
@@ -302,7 +318,7 @@ Open [http://localhost:3000](http://localhost:3000)
 2. **Triggers API endpoint** - Makes secure POST request to `/api/cron/check-prices`
 3. **Firecrawl scrapes all products** - Updates prices for all tracked products
 4. **Updates database** - Saves new prices and adds to history if changed
-5. **Sends email alerts** - Notifies users via Resend when prices drop
+5. **Sends email alerts** - Notifies users via  Mail when prices drop
 
 ### Why Firecrawl?
 
@@ -339,7 +355,7 @@ dealdrop/
 │   └── AuthModal.js                    # Google sign-in modal
 ├── lib/
 │   ├── firecrawl.js                    # Firecrawl API integration
-│   ├── email.js                        # Resend email templates
+│   ├── email.js                        # SMTP email templates
 │   └── utils.js                        # Utility functions
 ├── utils/
 │   └── supabase/
@@ -427,9 +443,7 @@ prompt: "Extract product name, price, currency, image URL, brand, rating, and av
 
 ### Email alerts not sending
 
-- Verify `RESEND_API_KEY` is correct
-- Check Resend dashboard for delivery logs
-- Ensure sender email is verified (for custom domains)
+- Verify `SMTP CREDENTIALS` is correct
 
 ### Cron job not running
 
