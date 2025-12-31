@@ -38,14 +38,14 @@ export default async function Home() {
     <main className="min-h-screen bg-linear-to-br from-orange-50 via-white to-orange-50">  {/* this spreads color from top to bottom right  */}
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 py-0 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Image
-              src="/deal-drop-logo.png"
+              src="/image.png"
               alt="Deal Drop Logo"
               width={600}
               height={200}
-              className="h-10 w-auto"
+              className="h-22 w-auto"
             />
           </div>
 
